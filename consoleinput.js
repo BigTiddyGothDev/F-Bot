@@ -7,26 +7,21 @@ var zlib = require('zlib');
 var auth = require('./auth.json');
 
 var ConsoleCommands = { // commands defined just for CLI usage, primarily for debug and development
-    "clihelp": function (){
-        console.log(this);
-    },
-    "testcli": function (){
+  "test1": function (){
         console.log('works...\n fine!');
     },
-    "restart": function(){
-        client.restart("restarting from cli", 5);
-    },
-    "eval": async function (line, command, args){
+  "eval": async function (line, command, args){
         try{
             console.log(eval(line.trim().slice(command.length +1)));
         } catch(err){
             console.log(err);
         }
     },
-    "commands": function (){
+  "commands": function (){
         console.log(client.commands);
     },
-    "test": function (line, command, args){
+  "commandreload": require('./bot.js').resetcommands,
+  "test": function (line, command, args){
 
         var auth = require("./auth.json");
         var fetch = require("node-fetch");
@@ -40,8 +35,9 @@ var ConsoleCommands = { // commands defined just for CLI usage, primarily for de
             .then(res => res.json()) // expecting a json response
             .then(json => console.log(json));
     },
-    "test2": function (){
-        client.api.getProfile("passivedragon").then(o =>{
+  "test2": function (){
+		var auth = require("./auth.json");
+        client.api.getProfile(auth.character).then(o =>{
             console.log(typeof o);
             console.log(o);
             // Object.keys(o).forEach(k=>{
@@ -53,6 +49,23 @@ var ConsoleCommands = { // commands defined just for CLI usage, primarily for de
 }
 
 
+// stuff needed to pretent messages came via Discord to use those commands aswell(where possible)
+async function SendMsg(msg){
+  console.log("response: " + msg);
+  return;
+};
+
+var msg = {
+  'author':{'username':'server','id':'0000'},
+  'member':{},
+  'guild': {'channels':[], 'id':'0000'},
+  'content':'',//is edited when passed
+  'channel':{'send':SendMsg},
+  'reply':SendMsg
+};
+//msg.member.roles = [{name:'REDACTED'}, {name:'Admin'}, {name:'Server'}];
+
+
 const readline = require('readline');
 const rl = readline.createInterface({
   input: process.stdin,
@@ -61,13 +74,13 @@ const rl = readline.createInterface({
 });
 rl.on('line', (line) => {
   try {
-    winston.silly(`CLI input: "${line}"`); // just in case something breaks, will be loged in the files
+    winston.info(`CLI input: "${line}"`); // just in case something breaks, will be logged in the files
     var args = line.trim().split(/ +/g);
     var command = args.shift().toLowerCase();
     if (ConsoleCommands[command] != null) {
       ConsoleCommands[command](line, command, args);
     } else {
-      // standart commandhandler
+      // standard commandhandler
       msg.content = client.prefix + line.trim(); //update
       let ListedCommand = client.commands.get(command) || client.commands.get(client.aliases.get(command)) || client.aliases.get(command);
       if (ListedCommand) {
@@ -87,8 +100,6 @@ rl.on('line', (line) => {
 
   } catch (err) {
     winston.error(err);
-  } finally {
-    //nothing
   }
   rl.prompt();
 });

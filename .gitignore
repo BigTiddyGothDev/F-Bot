@@ -1,8 +1,7 @@
-# Logs
-logs
-*.log
-dbs/*
 node_modules
+!node_modules/lib-fchat
 auth.json
+RoomDescription.txt
+.idea
 OPs.json
-*.json
+logs/

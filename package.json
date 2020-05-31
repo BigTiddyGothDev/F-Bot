@@ -1,7 +1,7 @@
 {
-  "name": "F-Bot",
+  "name": "bot for f-chat",
   "version": "1.0.0",
-  "description": "None yet",
+  "description": "",
   "main": "bot.js",
   "author": "passivedragon",
   "dependencies": {
@@ -9,7 +9,6 @@
     "lowdb": "^1.0.0",
     "moment": "^2.24.0",
     "node-fetch": "^2.6.0",
-    "package.json": "^2.0.1",
     "through2": "^3.0.1",
     "winston": "^3.2.1",
     "ws": "^7.1.2",

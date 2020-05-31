@@ -68,15 +68,11 @@ winston.add(new winston.transports.Console({level: 'silly',
 //   winston.add( new CustomTransport());
 // });
 
+
 // DataBase
 const low = require('lowdb');
 const FileSync = require('lowdb/adapters/FileSync');
 
-const adapter = new FileSync('./dbs/db.json');
-const db = low(adapter);
-
-
-var client = require("./client.js");
 
 function abortRestart(){
   if (client.rebooting.timer != undefined || client.rebooting) {
@@ -161,10 +157,6 @@ function rebootBot(){
 
 module.exports = {
   "winston": winston,
-  "db": db,
   "restart": restart,
   "abortrestart": abortRestart,
 };
-require('./client.js'); //takes the exported client and adds commands to it.
-client.restart = restart;
-client.abortrestart = abortRestart;
